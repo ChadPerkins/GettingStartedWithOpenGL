@@ -1,7 +1,10 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <stb_image/stb_image.cpp>
 
 #include "shader.h"
 
@@ -180,8 +183,19 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
-		// render container
+		// Create transformations (NOTE: All transformations are read in order from bottom to top)
+		glm::mat4 trans = glm::mat4(1.0f);
+		// Second we translate the rotated image to the bottom right corner of the screen
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		// First rotate the image around the origin
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		// get matrix's uniform location and set matrix
 		ourShader.use();
+		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		// render container
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
