@@ -9,7 +9,7 @@
 #include <iostream>
 
 class Shader
-{
+{	
 public:
 	// The program ID
 	unsigned int ID;

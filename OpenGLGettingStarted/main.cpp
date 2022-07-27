@@ -98,7 +98,7 @@ int main()
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
-	// world space positions of our cubes
+	// World space positions of our cubes
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
 		glm::vec3(2.0f,  5.0f, -15.0f),
@@ -128,10 +128,10 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// And then configure vertex attributes(s)
-	// position attribute
+	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	// texture coord attribute
+	// Texture coord attribute
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
@@ -199,6 +199,11 @@ int main()
 	ourShader.setInt("texture1", 0);
 	ourShader.setInt("texture2", 1);
 
+	// Pass projection matrix to shader (as projection matrix rarely changes there's no need to do this per frame)
+	// -----------------------------------------------------------------------------------------------------------
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+	ourShader.setMat4("projection", projection);
+
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -226,23 +231,14 @@ int main()
 		ourShader.use();
 
 		// Create the transformations:
-
-		// Create a projection matrix to use perspective projection
-		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
-
+		// ---------------------------
 		// Create the view matrix
-		glm::mat4 view = glm::mat4(1.0f);
-		// *NOTE* We move to scene in the -z direction to represent the camera moving away from the scene
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-		// Retrieve the matrix uniform locations
-		unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-		unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
-		// Pass them to the shaders
-		ourShader.setMat4("projection", projection);
+		glm::mat4 view = glm::mat4(1.0f); // Make sure to initialize the matrix to the identity matrix first
+		float radius = 10.0f;
+		float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+		float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+		view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ourShader.setMat4("view", view);
-
 		// Render boxes
 		glBindVertexArray(VAO);
 		for (unsigned int i = 0; i < 10; i++)
@@ -251,7 +247,7 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			ourShader.setMat4("model", model);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
