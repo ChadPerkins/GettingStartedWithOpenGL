@@ -11,8 +11,17 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
-const unsigned int SCREEN_WIDTH = 800.0f;
+const unsigned int SCREEN_WIDTH  = 800.0f;
 const unsigned int SCREEN_HEIGHT = 600.0f;
+
+// Camera variables
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 0.3f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// Time related variables
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 int main()
 {
@@ -210,6 +219,12 @@ int main()
 	// Render loop
 	while (!glfwWindowShouldClose(window))
 	{
+		// Per frame time related logic
+		// ---------------------------
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+		
 		// Input
 		// -----
 		// Check to see if the user closes GLFW
@@ -234,10 +249,12 @@ int main()
 		// ---------------------------
 		// Create the view matrix
 		glm::mat4 view = glm::mat4(1.0f); // Make sure to initialize the matrix to the identity matrix first
-		float radius = 10.0f;
-		float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-		float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-		view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		float radius   = 10.0f;
+		float camX     = sin(glfwGetTime()) * radius;
+		float camZ     = cos(glfwGetTime()) * radius;
+
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		// Pass the view matrix to the shader
 		ourShader.setMat4("view", view);
 		// Render boxes
 		glBindVertexArray(VAO);
@@ -273,8 +290,21 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // A function that closes GLFW if the user presses the escape key
 void processInput(GLFWwindow* window)
 {
+	float cameraSpeed = 2.5f * deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
 		glfwSetWindowShouldClose(window, true);
-	}
+	
 }
