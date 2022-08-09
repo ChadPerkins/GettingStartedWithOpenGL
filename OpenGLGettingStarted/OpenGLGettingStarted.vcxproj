@@ -79,12 +79,12 @@
     <LibraryPath>C:\Dev\OpenGL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Dev\OpenGL\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Dev\OpenGL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SlutionDir)OpenGLGettingStarted\Vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)OpenGLGettingStarted\Vendor\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Dev\OpenGL\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Dev\OpenGL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SlutionDir)OpenGLGettingStarted\Vendor\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)OpenGLGettingStarted\Vendor\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,12 +124,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Vendor;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Vendor\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GLFW/glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,18 +140,18 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Vendor;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Vendor\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GLFW/glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Users\infla\Downloads\glad\src\glad.c" />
+    <ClCompile Include="..\..\TestLighting\TestLighting\glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -438,6 +438,8 @@
     <ClInclude Include="Vendor\glm\vec3.hpp" />
     <ClInclude Include="Vendor\glm\vec4.hpp" />
     <ClInclude Include="Vendor\glm\vector_relational.hpp" />
+    <ClInclude Include="Vendor\include\glad\glad.h" />
+    <ClInclude Include="Vendor\include\glad\KHR\khrplatform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\fragment.shader" />
